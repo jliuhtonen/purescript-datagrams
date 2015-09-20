@@ -20,10 +20,12 @@ exports.closeSocket = function(socket) {
 exports.bind = function(port) {
     return function(address) {
         return function(callback) {
-            return function() {
-                socket.bind(bindInfo, function() {
-                    callback(socket.address())()
-                })
+            return function(socket) {
+                return function() {
+                    socket.bind(port, address, function() {
+                        callback(socket.address())()
+                    })
+                }
             }
         }
     }
