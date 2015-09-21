@@ -12,6 +12,7 @@
   ],
   "dependencies": {
     "purescript-aff": "~0.12.0",
-    "purescript-console": "^0.1.0"
+    "purescript-console": "^0.1.0",
+    "purescript-functions": "~0.1.0"
   }
 }

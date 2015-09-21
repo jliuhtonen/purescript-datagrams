@@ -11,6 +11,13 @@ newtype SocketInfo = SocketInfo {
     family :: String
 }
 
+newtype RemoteAddressInfo = RemoteAddressInfo {
+    address :: String,
+    port :: Int
+}
+
 instance showSocketInfo :: Show SocketInfo where
     show (SocketInfo { port: p, address: a, family: f }) = "port: " ++ show p ++ " address: " ++ show a ++ " family: " ++ show f
 
+instance showRemoteAddressInfo :: Show RemoteAddressInfo where
+    show (RemoteAddressInfo { address: a, port: p }) = "address: " ++ show a ++ " port: " ++ show p

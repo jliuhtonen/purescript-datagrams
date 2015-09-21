@@ -17,6 +17,17 @@ exports.closeSocket = function(socket) {
     }
 }
 
+exports.onMessage = function(callback) {
+    return function(socket) {
+        return function() {
+            socket.on('message', function(buf, rinfo) {
+              callback(buf.toString('utf8'))(rinfo)()  
+            })
+            return {}
+        }
+    }
+}
+
 exports.bind = function(port) {
     return function(address) {
         return function(callback) {

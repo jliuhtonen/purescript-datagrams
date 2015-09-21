@@ -15,6 +15,9 @@ createSocket = liftEff <<< U.createSocket
 closeSocket :: forall eff. Socket -> Aff (socket :: SOCKET | eff) Unit
 closeSocket = liftEff <<< U.closeSocket
 
+onMessage :: forall eff. (String -> RemoteAddressInfo -> Eff eff Unit) -> Socket -> Aff eff Unit
+onMessage msgHandler socket = liftEff $ U.onMessage msgHandler socket
+
 send :: forall eff. Socket -> String -> Int -> Int -> Int -> String -> Aff (socket :: SOCKET | eff) Unit
 send socket buffer offset length port address = liftEff $ U.send socket buffer offset length port address
 
