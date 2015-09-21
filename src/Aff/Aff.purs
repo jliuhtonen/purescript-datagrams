@@ -3,6 +3,7 @@ module Datagram.UDP.Aff where
 import Control.Monad.Aff
 import Control.Monad.Eff
 import Control.Monad.Eff.Class
+import Node.Buffer
 import Prelude hiding (bind)
 import Data.Maybe
 
@@ -15,10 +16,10 @@ createSocket = liftEff <<< U.createSocket
 closeSocket :: forall eff. Socket -> Aff (socket :: SOCKET | eff) Unit
 closeSocket = liftEff <<< U.closeSocket
 
-onMessage :: forall eff. (String -> RemoteAddressInfo -> Eff eff Unit) -> Socket -> Aff eff Unit
+onMessage :: forall eff. (Buffer -> RemoteAddressInfo -> Eff eff Unit) -> Socket -> Aff eff Unit
 onMessage msgHandler socket = liftEff $ U.onMessage msgHandler socket
 
-send :: forall eff. Socket -> String -> Int -> Int -> Int -> String -> Aff (socket :: SOCKET | eff) Unit
+send :: forall eff. Socket -> Buffer -> Int -> Int -> Int -> String -> Aff (socket :: SOCKET | eff) Unit
 send socket buffer offset length port address = liftEff $ U.send socket buffer offset length port address
 
 ref :: forall eff. Socket -> Aff (socket :: SOCKET | eff) Socket
