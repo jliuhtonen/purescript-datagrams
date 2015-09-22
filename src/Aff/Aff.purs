@@ -19,8 +19,8 @@ closeSocket = liftEff <<< U.closeSocket
 onMessage :: forall eff. (Buffer -> RemoteAddressInfo -> Eff eff Unit) -> Socket -> Aff eff Unit
 onMessage msgHandler socket = liftEff $ U.onMessage msgHandler socket
 
-send :: forall eff. Socket -> Buffer -> Int -> Int -> Int -> String -> Aff (socket :: SOCKET | eff) Unit
-send socket buffer offset length port address = liftEff $ U.send socket buffer offset length port address
+send :: forall eff. Buffer -> Int -> Int -> Int -> String -> Socket -> Aff (socket :: SOCKET | eff) Unit
+send buffer offset length port address socket = liftEff $ U.send buffer offset length port address socket
 
 ref :: forall eff. Socket -> Aff (socket :: SOCKET | eff) Socket
 ref = liftEff <<< U.ref

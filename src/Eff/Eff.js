@@ -42,12 +42,12 @@ exports.bind = function(port) {
     }
 }
 
-exports.send = function(socket) {
-    return function(buffer) {
-        return function(offset) {
-            return function(length) {
-                return function(port) {
-                    return function(address) {
+exports.send = function(buffer) {
+    return function(offset) {
+        return function(length) {
+            return function(port) {
+                return function(address) {
+                    return function(socket) {
                         return function() {
                             socket.send(buffer, offset, length, port, address)
                             return {}
@@ -58,6 +58,7 @@ exports.send = function(socket) {
         }
     }
 }
+
 
 exports.ref = function(socket) {
     return function() {
