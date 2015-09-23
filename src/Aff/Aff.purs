@@ -10,7 +10,7 @@ import Data.Maybe
 import Datagram.UDP
 import qualified Datagram.UDP.Eff as U
 
-createSocket :: forall eff. String -> Aff (socket :: SOCKET | eff) Socket
+createSocket :: forall eff. SocketType -> Aff (socket :: SOCKET | eff) Socket
 createSocket = liftEff <<< U.createSocket
 
 closeSocket :: forall eff. Socket -> Aff (socket :: SOCKET | eff) Unit

@@ -4,7 +4,7 @@ var dgram = require('dgram')
 
 // module Datagram.UDP.Eff
 
-exports.createSocket = function(socketType) {
+exports._createSocket = function(socketType) {
     return function() {
         return dgram.createSocket(socketType)
     }
