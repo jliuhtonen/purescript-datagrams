@@ -47,7 +47,7 @@ onMessage :: forall eff. (Buffer -> RemoteAddressInfo -> Eff eff Unit) -> Socket
 onMessage msgHandler socket = liftEff $ _onMessage msgHandler socket
 
 send :: forall eff. Buffer -> Int -> Int -> Int -> String -> Socket -> Aff (socket :: SOCKET | eff) Unit
-send buffer offset length port address socket = liftEff $ _send buffer offset length port address socket
+send = runFn6 _send
 
 ref :: forall eff. Socket -> Aff (socket :: SOCKET | eff) Socket
 ref = liftEff <<< _ref
@@ -65,7 +65,7 @@ foreign import _createSocket :: forall eff. String -> Eff (socket :: SOCKET | ef
 foreign import _bind :: forall eff. Fn3 (Maybe Int) (Maybe String) Socket (Aff (socket :: SOCKET | eff) SocketInfo)
 foreign import _closeSocket :: forall eff. Socket -> Eff (socket :: SOCKET | eff) Unit
 foreign import _onMessage :: forall eff. (Buffer -> RemoteAddressInfo -> Eff eff Unit) -> Socket -> Eff (socket :: SOCKET | eff) Unit
-foreign import _send :: forall eff. Buffer -> Int -> Int -> Int -> String -> Socket -> Eff (socket :: SOCKET | eff) Unit
+foreign import _send :: forall eff. Fn6 Buffer Int Int Int String Socket (Aff (socket :: SOCKET | eff) Unit)
 foreign import _ref :: forall eff. Socket -> Eff (socket :: SOCKET | eff) Socket
 foreign import _unref :: forall eff. Socket -> Eff (socket :: SOCKET | eff) Socket
 foreign import _setTTL :: forall eff. Fn2 Int Socket (Eff (socket :: SOCKET | eff) Socket)
