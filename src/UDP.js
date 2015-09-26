@@ -1,8 +1,7 @@
 'use strict';
-
 var dgram = require('dgram')
 
-// module Datagram.UDP.Eff
+// module Datagram.UDP
 
 exports._createSocket = function(socketType) {
     return function() {
@@ -10,14 +9,14 @@ exports._createSocket = function(socketType) {
     }
 }
 
-exports.closeSocket = function(socket) {
+exports._closeSocket = function(socket) {
     return function() {
         socket.close()
         return {}
     }
 }
 
-exports.onMessage = function(callback) {
+exports._onMessage = function(callback) {
     return function(socket) {
         return function() {
             socket.on('message', function(buf, rinfo) {
@@ -30,19 +29,21 @@ exports.onMessage = function(callback) {
 
 exports.bind = function(port) {
     return function(address) {
-        return function(callback) {
-            return function(socket) {
-                return function() {
+        return function(socket) {
+            return function(success, error) {
+                try {
                     socket.bind(port.value0, address.value0, function() {
-                        callback(socket.address())()
+                        success(socket.address())
                     })
+                } catch(e) {
+                    error(e)
                 }
             }
         }
     }
 }
 
-exports.send = function(buffer) {
+exports._send = function(buffer) {
     return function(offset) {
         return function(length) {
             return function(port) {
@@ -60,13 +61,13 @@ exports.send = function(buffer) {
 }
 
 
-exports.ref = function(socket) {
+exports._ref = function(socket) {
     return function() {
         return socket.ref()
     }
 }
 
-exports.unref = function(socket) {
+exports._unref = function(socket) {
     return function() {
         return socket.unref()
     }
