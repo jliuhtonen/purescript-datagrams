@@ -4,7 +4,7 @@ import Control.Monad.Aff
 import Control.Monad.Eff
 import Control.Monad.Eff.Class
 import Node.Buffer
-import Prelude hiding (bind)
+import Prelude
 import Data.Maybe
 import Data.Function
 
@@ -40,8 +40,8 @@ createSocket socketType = liftEff <<< _createSocket $ show socketType
 closeSocket :: forall eff. Socket -> Aff (socket :: SOCKET | eff) Unit
 closeSocket = liftEff <<< _closeSocket
 
-bind :: forall eff. Maybe Int -> Maybe String -> Socket -> Aff (socket :: SOCKET | eff) SocketInfo
-bind = runFn3 _bind 
+bindSocket :: forall eff. Maybe Int -> Maybe String -> Socket -> Aff (socket :: SOCKET | eff) SocketInfo
+bindSocket = runFn3 _bind 
 
 onMessage :: forall eff. (Buffer -> RemoteAddressInfo -> Eff eff Unit) -> Socket -> Aff (socket :: SOCKET | eff) Unit
 onMessage msgHandler socket = liftEff $ _onMessage msgHandler socket
