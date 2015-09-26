@@ -6,6 +6,7 @@ import Control.Monad.Eff.Class
 import Node.Buffer
 import Prelude hiding (bind)
 import Data.Maybe
+import Data.Function
 
 foreign import data Socket :: *
 foreign import data SOCKET :: !
@@ -51,6 +52,12 @@ ref = liftEff <<< _ref
 unref :: forall eff. Socket -> Aff (socket :: SOCKET | eff) Socket
 unref = liftEff <<< _unref
 
+setTTL :: forall eff. Int -> Socket -> Aff (socket :: SOCKET | eff) Socket
+setTTL hops socket = liftEff $ runFn2 _setTTL hops socket
+
+setMulticastTTL :: forall eff. Int -> Socket -> Aff (socket :: SOCKET | eff) Socket
+setMulticastTTL hops socket = liftEff $ runFn2 _setMulticastTTL hops socket
+
 foreign import _createSocket :: forall eff. String -> Eff (socket :: SOCKET | eff) Socket
 foreign import bind :: forall eff. Maybe Int -> Maybe String -> Socket -> Aff (socket :: SOCKET | eff) SocketInfo
 foreign import _closeSocket :: forall eff. Socket -> Eff (socket :: SOCKET | eff) Unit
@@ -58,4 +65,5 @@ foreign import _onMessage :: forall eff. (Buffer -> RemoteAddressInfo -> Eff eff
 foreign import _send :: forall eff. Buffer -> Int -> Int -> Int -> String -> Socket -> Eff (socket :: SOCKET | eff) Unit
 foreign import _ref :: forall eff. Socket -> Eff (socket :: SOCKET | eff) Socket
 foreign import _unref :: forall eff. Socket -> Eff (socket :: SOCKET | eff) Socket
-
+foreign import _setTTL :: forall eff. Fn2 Int Socket (Eff (socket :: SOCKET | eff) Socket)
+foreign import _setMulticastTTL :: forall eff. Fn2 Int Socket (Eff (socket :: SOCKET | eff) Socket)

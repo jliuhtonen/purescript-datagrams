@@ -72,3 +72,17 @@ exports._unref = function(socket) {
         return socket.unref()
     }
 }
+
+exports._setTTL = function(hops, socket) {
+    return function() {
+        socket.setTTL(hops)
+        return socket
+    }
+}
+
+exports._setMulticastTTL = function(hops, socket) {
+    return function() {
+        socket.setMulticastTTL(hops)
+        return socket
+    }
+}
