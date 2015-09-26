@@ -1,4 +1,4 @@
-module Datagram.UDP where
+module Node.Datagram where
 
 import Control.Monad.Aff
 import Control.Monad.Eff

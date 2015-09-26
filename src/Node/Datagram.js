@@ -1,7 +1,7 @@
 'use strict';
 var dgram = require('dgram')
 
-// module Datagram.UDP
+// module Node.Datagram
 
 exports._createSocket = function(socketType) {
     return function() {
