@@ -1,4 +1,19 @@
-module Node.Datagram where
+module Node.Datagram(
+    Socket(),
+    SOCKET(),
+    SocketType(..),
+    SocketInfo(),
+    RemoteAddressInfo(),
+    createSocket,
+    closeSocket,
+    bindSocket,
+    onMessage,
+    send,
+    ref,
+    unref,
+    setTTL,
+    setMulticastTTL    
+) where
 
 import Control.Monad.Aff
 import Control.Monad.Eff
