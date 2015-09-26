@@ -40,6 +40,9 @@ createSocket socketType = liftEff <<< _createSocket $ show socketType
 closeSocket :: forall eff. Socket -> Aff (socket :: SOCKET | eff) Unit
 closeSocket = liftEff <<< _closeSocket
 
+bind :: forall eff. Maybe Int -> Maybe String -> Socket -> Aff (socket :: SOCKET | eff) SocketInfo
+bind = runFn3 _bind 
+
 onMessage :: forall eff. (Buffer -> RemoteAddressInfo -> Eff eff Unit) -> Socket -> Aff (socket :: SOCKET | eff) Unit
 onMessage msgHandler socket = liftEff $ _onMessage msgHandler socket
 
@@ -59,7 +62,7 @@ setMulticastTTL :: forall eff. Int -> Socket -> Aff (socket :: SOCKET | eff) Soc
 setMulticastTTL hops socket = liftEff $ runFn2 _setMulticastTTL hops socket
 
 foreign import _createSocket :: forall eff. String -> Eff (socket :: SOCKET | eff) Socket
-foreign import bind :: forall eff. Maybe Int -> Maybe String -> Socket -> Aff (socket :: SOCKET | eff) SocketInfo
+foreign import _bind :: forall eff. Fn3 (Maybe Int) (Maybe String) Socket (Aff (socket :: SOCKET | eff) SocketInfo)
 foreign import _closeSocket :: forall eff. Socket -> Eff (socket :: SOCKET | eff) Unit
 foreign import _onMessage :: forall eff. (Buffer -> RemoteAddressInfo -> Eff eff Unit) -> Socket -> Eff (socket :: SOCKET | eff) Unit
 foreign import _send :: forall eff. Buffer -> Int -> Int -> Int -> String -> Socket -> Eff (socket :: SOCKET | eff) Unit

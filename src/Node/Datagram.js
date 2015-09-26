@@ -27,18 +27,14 @@ exports._onMessage = function(callback) {
     }
 }
 
-exports.bind = function(port) {
-    return function(address) {
-        return function(socket) {
-            return function(success, error) {
-                try {
-                    socket.bind(port.value0, address.value0, function() {
-                        success(socket.address())
-                    })
-                } catch(e) {
-                    error(e)
-                }
-            }
+exports._bind = function(port, address, socket) {
+    return function(success, error) {
+        try {
+            socket.bind(port.value0, address.value0, function() {
+                success(socket.address())
+            })
+        } catch(e) {
+            error(e)
         }
     }
 }
