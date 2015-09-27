@@ -39,6 +39,16 @@ exports._bind = function(port, address, socket) {
     }
 }
 
+exports.address = function(socket) {
+    return function(success, error) {
+        try {
+            return socket.address()
+        } catch (e) {
+            error(e)
+        }
+    }
+}
+
 exports._send = function(buffer, offset, length, port, address, socket) {
     return function(success, error) {
         socket.send(buffer, offset, length, port, address, function(e) {

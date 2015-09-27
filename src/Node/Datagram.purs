@@ -7,6 +7,7 @@ module Node.Datagram(
     createSocket,
     closeSocket,
     bindSocket,
+    address,
     onMessage,
     send,
     ref,
@@ -83,13 +84,14 @@ setMulticastTTL :: forall eff. Int -> Socket -> Aff (socket :: SOCKET | eff) Soc
 setMulticastTTL hops socket = liftEff $ runFn2 _setMulticastTTL hops socket
 
 addMembership :: forall eff. String -> (Maybe String) -> Socket -> Aff (socket :: SOCKET | eff) Socket
-addMembership address interface socket = liftEff $ runFn3 _addMembership address interface socket
+addMembership addr interface socket = liftEff $ runFn3 _addMembership addr interface socket
 
 dropMembership :: forall eff. String -> (Maybe String) -> Socket -> Aff (socket :: SOCKET | eff) Socket
-dropMembership address interface socket = liftEff $ runFn3 _dropMembership address interface socket
+dropMembership addr interface socket = liftEff $ runFn3 _dropMembership addr interface socket
 
 foreign import _createSocket :: forall eff. String -> Eff (socket :: SOCKET | eff) Socket
 foreign import _bind :: forall eff. Fn3 (Maybe Int) (Maybe String) Socket (Aff (socket :: SOCKET | eff) SocketInfo)
+foreign import address :: forall eff. Socket -> Aff (socket :: SOCKET | eff) SocketInfo
 foreign import _closeSocket :: forall eff. Socket -> Eff (socket :: SOCKET | eff) Unit
 foreign import _onMessage :: forall eff. (Buffer -> RemoteAddressInfo -> Eff eff Unit) -> Socket -> Eff (socket :: SOCKET | eff) Unit
 foreign import _send :: forall eff. Fn6 Buffer Int Int Int String Socket (Aff (socket :: SOCKET | eff) Unit)
