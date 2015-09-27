@@ -9,6 +9,7 @@ module Node.Datagram(
     bindSocket,
     address,
     onMessage,
+    onError,
     send,
     ref,
     unref,
@@ -22,6 +23,7 @@ module Node.Datagram(
 import Control.Monad.Aff
 import Control.Monad.Eff
 import Control.Monad.Eff.Class
+import Control.Monad.Eff.Exception (Error())
 import Node.Buffer
 import Prelude
 import Data.Maybe
@@ -65,6 +67,9 @@ bindSocket = runFn3 _bind
 onMessage :: forall eff. (Buffer -> RemoteAddressInfo -> Eff eff Unit) -> Socket -> Aff (socket :: SOCKET | eff) Unit
 onMessage msgHandler socket = liftEff $ _onMessage msgHandler socket
 
+onError :: forall eff. (Error -> Eff eff Unit) -> Socket -> Aff (socket :: SOCKET | eff) Unit
+onError errHandler socket = liftEff $ runFn2 _onError errHandler socket
+
 send :: forall eff. Buffer -> Int -> Int -> Int -> String -> Socket -> Aff (socket :: SOCKET | eff) Unit
 send = runFn6 _send
 
@@ -94,6 +99,7 @@ foreign import _bind :: forall eff. Fn3 (Maybe Int) (Maybe String) Socket (Aff (
 foreign import address :: forall eff. Socket -> Aff (socket :: SOCKET | eff) SocketInfo
 foreign import _closeSocket :: forall eff. Socket -> Eff (socket :: SOCKET | eff) Unit
 foreign import _onMessage :: forall eff. (Buffer -> RemoteAddressInfo -> Eff eff Unit) -> Socket -> Eff (socket :: SOCKET | eff) Unit
+foreign import _onError :: forall eff. Fn2 (Error -> Eff eff Unit) Socket (Eff (socket :: SOCKET | eff) Unit)
 foreign import _send :: forall eff. Fn6 Buffer Int Int Int String Socket (Aff (socket :: SOCKET | eff) Unit)
 foreign import _ref :: forall eff. Socket -> Eff (socket :: SOCKET | eff) Socket
 foreign import _unref :: forall eff. Socket -> Eff (socket :: SOCKET | eff) Socket

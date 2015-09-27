@@ -27,6 +27,15 @@ exports._onMessage = function(callback) {
     }
 }
 
+exports._onError = function(callback, socket) {
+    return function() {
+        socket.on('error', function(err) {
+            callback(err)()
+        })
+        return {}
+    }
+}
+
 exports._bind = function(port, address, socket) {
     return function(success, error) {
         try {
