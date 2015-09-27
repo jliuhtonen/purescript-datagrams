@@ -51,7 +51,6 @@ exports._send = function(buffer, offset, length, port, address, socket) {
     }
 }
 
-
 exports._ref = function(socket) {
     return function() {
         return socket.ref()
@@ -64,6 +63,13 @@ exports._unref = function(socket) {
     }
 }
 
+exports._setBroadcast = function(broadcast, socket) {
+    return function() {
+        socket.setBroadcast(broadcast)
+        return socket
+    }
+} 
+
 exports._setTTL = function(hops, socket) {
     return function() {
         socket.setTTL(hops)
@@ -74,6 +80,22 @@ exports._setTTL = function(hops, socket) {
 exports._setMulticastTTL = function(hops, socket) {
     return function() {
         socket.setMulticastTTL(hops)
+        return socket
+    }
+}
+
+exports._addMembership = function(address, maybeInterface, socket) {
+    return function() {
+        var interfaceVal = maybeInterface.value0 ? maybeInterface.value0 : undefined
+        socket.addMembership(address, interfaceVal)
+        return socket
+    }
+}
+
+exports._dropMembership = function(address, maybeInterface, socket) {
+    return function() {
+        var interfaceVal = maybeInterface.value0 ? maybeInterface.value0 : undefined
+        socket.dropMembership(address, interfaceVal)
         return socket
     }
 }

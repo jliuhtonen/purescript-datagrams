@@ -11,8 +11,11 @@ module Node.Datagram(
     send,
     ref,
     unref,
+    setBroadcast,
     setTTL,
-    setMulticastTTL    
+    setMulticastTTL,
+    addMembership,
+    dropMembership    
 ) where
 
 import Control.Monad.Aff
@@ -70,11 +73,20 @@ ref = liftEff <<< _ref
 unref :: forall eff. Socket -> Aff (socket :: SOCKET | eff) Socket
 unref = liftEff <<< _unref
 
+setBroadcast :: forall eff. Boolean -> Socket -> Aff (socket :: SOCKET | eff) Socket
+setBroadcast multicast socket = liftEff $ runFn2 _setBroadcast multicast socket
+
 setTTL :: forall eff. Int -> Socket -> Aff (socket :: SOCKET | eff) Socket
 setTTL hops socket = liftEff $ runFn2 _setTTL hops socket
 
 setMulticastTTL :: forall eff. Int -> Socket -> Aff (socket :: SOCKET | eff) Socket
 setMulticastTTL hops socket = liftEff $ runFn2 _setMulticastTTL hops socket
+
+addMembership :: forall eff. String -> (Maybe String) -> Socket -> Aff (socket :: SOCKET | eff) Socket
+addMembership address interface socket = liftEff $ runFn3 _addMembership address interface socket
+
+dropMembership :: forall eff. String -> (Maybe String) -> Socket -> Aff (socket :: SOCKET | eff) Socket
+dropMembership address interface socket = liftEff $ runFn3 _dropMembership address interface socket
 
 foreign import _createSocket :: forall eff. String -> Eff (socket :: SOCKET | eff) Socket
 foreign import _bind :: forall eff. Fn3 (Maybe Int) (Maybe String) Socket (Aff (socket :: SOCKET | eff) SocketInfo)
@@ -83,5 +95,8 @@ foreign import _onMessage :: forall eff. (Buffer -> RemoteAddressInfo -> Eff eff
 foreign import _send :: forall eff. Fn6 Buffer Int Int Int String Socket (Aff (socket :: SOCKET | eff) Unit)
 foreign import _ref :: forall eff. Socket -> Eff (socket :: SOCKET | eff) Socket
 foreign import _unref :: forall eff. Socket -> Eff (socket :: SOCKET | eff) Socket
+foreign import _setBroadcast :: forall eff. Fn2 Boolean Socket (Eff (socket :: SOCKET | eff) Socket)
 foreign import _setTTL :: forall eff. Fn2 Int Socket (Eff (socket :: SOCKET | eff) Socket)
 foreign import _setMulticastTTL :: forall eff. Fn2 Int Socket (Eff (socket :: SOCKET | eff) Socket)
+foreign import _addMembership :: forall eff. Fn3 String (Maybe String) Socket (Eff (socket :: SOCKET | eff) Socket)
+foreign import _dropMembership :: forall eff. Fn3 String (Maybe String) Socket (Eff (socket :: SOCKET | eff) Socket)
