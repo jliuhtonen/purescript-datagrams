@@ -1,6 +1,6 @@
 {
-  "name": "purescript-datagrams",
-  "version": "1.0.0",
+  "name": "purescript-node-datagrams",
+  "version": "0.1.0",
   "moduleType": [
     "node"
   ],
@@ -9,6 +9,12 @@
     "node_modules",
     "bower_components",
     "output"
+  ],
+  "keywords": [
+    "purescript",
+    "node",
+    "udp",
+    "datagram"
   ],
   "dependencies": {
     "purescript-aff": "~0.12.0",
