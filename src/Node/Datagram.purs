@@ -2,6 +2,11 @@ module Node.Datagram(
     Socket(),
     SOCKET(),
     SocketType(..),
+    Port(),
+    Address(),
+    Family(),
+    BufferLength(),
+    Interface(),
     SocketInfo(),
     RemoteAddressInfo(),
     createSocket,
@@ -34,15 +39,21 @@ foreign import data SOCKET :: !
 
 data SocketType = UDP4 | UDP6
 
+type Port = Int
+type Address = String
+type Family = String
+type BufferLength = Int
+type Interface = String
+
 newtype SocketInfo = SocketInfo {
-    port :: Int,
-    address :: String,
-    family :: String
+    port :: Port,
+    address :: Address,
+    family :: Family
 }
 
 newtype RemoteAddressInfo = RemoteAddressInfo {
-    address :: String,
-    port :: Int
+    address :: Address,
+    port :: Port
 }
 
 instance showSocketType :: Show SocketType where
@@ -61,7 +72,7 @@ createSocket socketType = liftEff <<< _createSocket $ show socketType
 closeSocket :: forall eff. Socket -> Aff (socket :: SOCKET | eff) Unit
 closeSocket = liftEff <<< _closeSocket
 
-bindSocket :: forall eff. Maybe Int -> Maybe String -> Socket -> Aff (socket :: SOCKET | eff) SocketInfo
+bindSocket :: forall eff. Maybe Port -> Maybe Address -> Socket -> Aff (socket :: SOCKET | eff) SocketInfo
 bindSocket = runFn3 _bind 
 
 onMessage :: forall eff. (Buffer -> RemoteAddressInfo -> Eff eff Unit) -> Socket -> Aff (socket :: SOCKET | eff) Unit
@@ -70,7 +81,7 @@ onMessage msgHandler socket = liftEff $ _onMessage msgHandler socket
 onError :: forall eff. (Error -> Eff eff Unit) -> Socket -> Aff (socket :: SOCKET | eff) Unit
 onError errHandler socket = liftEff $ runFn2 _onError errHandler socket
 
-send :: forall eff. Buffer -> Int -> Int -> Int -> String -> Socket -> Aff (socket :: SOCKET | eff) Unit
+send :: forall eff. Buffer -> Offset -> BufferLength -> Port -> Address -> Socket -> Aff (socket :: SOCKET | eff) Unit
 send = runFn6 _send
 
 ref :: forall eff. Socket -> Aff (socket :: SOCKET | eff) Socket
@@ -88,10 +99,10 @@ setTTL hops socket = liftEff $ runFn2 _setTTL hops socket
 setMulticastTTL :: forall eff. Int -> Socket -> Aff (socket :: SOCKET | eff) Socket
 setMulticastTTL hops socket = liftEff $ runFn2 _setMulticastTTL hops socket
 
-addMembership :: forall eff. String -> (Maybe String) -> Socket -> Aff (socket :: SOCKET | eff) Socket
+addMembership :: forall eff. Address -> (Maybe Interface) -> Socket -> Aff (socket :: SOCKET | eff) Socket
 addMembership addr interface socket = liftEff $ runFn3 _addMembership addr interface socket
 
-dropMembership :: forall eff. String -> (Maybe String) -> Socket -> Aff (socket :: SOCKET | eff) Socket
+dropMembership :: forall eff. Address -> (Maybe Interface) -> Socket -> Aff (socket :: SOCKET | eff) Socket
 dropMembership addr interface socket = liftEff $ runFn3 _dropMembership addr interface socket
 
 foreign import _createSocket :: forall eff. String -> Eff (socket :: SOCKET | eff) Socket
