@@ -1,29 +1,29 @@
 module Node.Datagram(
-    Socket(),
-    SOCKET(),
-    SocketType(..),
-    Port(),
-    Address(),
-    Family(),
-    BufferLength(),
-    Interface(),
-    SocketInfo(),
-    RemoteAddressInfo(),
-    createSocket,
-    closeSocket,
-    bindSocket,
-    address,
-    onMessage,
-    onError,
-    send,
-    ref,
-    unref,
-    setBroadcast,
-    setTTL,
-    setMulticastTTL,
-    addMembership,
-    dropMembership    
-) where
+  Socket(),
+  SOCKET(),
+  SocketType(..),
+  Port(),
+  Address(),
+  Family(),
+  BufferLength(),
+  Interface(),
+  SocketInfo(),
+  RemoteAddressInfo(),
+  createSocket,
+  closeSocket,
+  bindSocket,
+  address,
+  onMessage,
+  onError,
+  send,
+  ref,
+  unref,
+  setBroadcast,
+  setTTL,
+  setMulticastTTL,
+  addMembership,
+  dropMembership    
+  ) where
 
 import Control.Monad.Aff
 import Control.Monad.Eff
@@ -46,25 +46,25 @@ type BufferLength = Int
 type Interface = String
 
 newtype SocketInfo = SocketInfo {
-    port :: Port,
-    address :: Address,
-    family :: Family
+  port :: Port,
+  address :: Address,
+  family :: Family
 }
 
 newtype RemoteAddressInfo = RemoteAddressInfo {
-    address :: Address,
-    port :: Port
+  address :: Address,
+  port :: Port
 }
 
 instance showSocketType :: Show SocketType where
-    show UDP4 = "udp4"
-    show UDP6 = "udp6"
+  show UDP4 = "udp4"
+  show UDP6 = "udp6"
 
 instance showSocketInfo :: Show SocketInfo where
-    show (SocketInfo { port: p, address: a, family: f }) = "port: " ++ show p ++ " address: " ++ show a ++ " family: " ++ show f
+  show (SocketInfo { port: p, address: a, family: f }) = "port: " ++ show p ++ " address: " ++ show a ++ " family: " ++ show f
 
 instance showRemoteAddressInfo :: Show RemoteAddressInfo where
-    show (RemoteAddressInfo { address: a, port: p }) = "address: " ++ show a ++ " port: " ++ show p
+  show (RemoteAddressInfo { address: a, port: p }) = "address: " ++ show a ++ " port: " ++ show p
 
 createSocket :: forall eff. SocketType -> Aff (socket :: SOCKET | eff) Socket
 createSocket socketType = liftEff <<< _createSocket $ show socketType
