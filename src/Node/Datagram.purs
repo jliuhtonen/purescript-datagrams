@@ -7,6 +7,8 @@ module Node.Datagram(
   Family(),
   BufferLength(),
   Interface(),
+  MessageListener(),
+  ErrorListener(),
   SocketInfo(),
   RemoteAddressInfo(..),
   createSocket,
@@ -45,6 +47,9 @@ type Family = String
 type BufferLength = Int
 type Interface = String
 
+type MessageListener eff = Buffer -> RemoteAddressInfo -> Eff eff Unit
+type ErrorListener eff = Error -> Eff eff Unit
+
 newtype SocketInfo = SocketInfo {
   port :: Port,
   address :: Address,
@@ -75,10 +80,10 @@ closeSocket = liftEff <<< _closeSocket
 bindSocket :: forall eff. Maybe Port -> Maybe Address -> Socket -> Aff (socket :: SOCKET | eff) SocketInfo
 bindSocket = runFn3 _bind 
 
-onMessage :: forall eff1 eff2. (Buffer -> RemoteAddressInfo -> Eff eff1 Unit) -> Socket -> Aff (socket :: SOCKET | eff2) Unit
+onMessage :: forall eff1 eff2. MessageListener eff1 -> Socket -> Aff (socket :: SOCKET | eff2) Unit
 onMessage msgHandler socket = liftEff $ _onMessage msgHandler socket
 
-onError :: forall eff. (Error -> Eff eff Unit) -> Socket -> Aff (socket :: SOCKET | eff) Unit
+onError :: forall eff1 eff2. ErrorListener eff1 -> Socket -> Aff (socket :: SOCKET | eff2) Unit
 onError errHandler socket = liftEff $ runFn2 _onError errHandler socket
 
 send :: forall eff. Buffer -> Offset -> BufferLength -> Port -> Address -> Socket -> Aff (socket :: SOCKET | eff) Unit
