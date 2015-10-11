@@ -8,7 +8,7 @@ module Node.Datagram(
   BufferLength(),
   Interface(),
   SocketInfo(),
-  RemoteAddressInfo(),
+  RemoteAddressInfo(..),
   createSocket,
   closeSocket,
   bindSocket,
