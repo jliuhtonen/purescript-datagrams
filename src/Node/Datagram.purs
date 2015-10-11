@@ -75,7 +75,7 @@ closeSocket = liftEff <<< _closeSocket
 bindSocket :: forall eff. Maybe Port -> Maybe Address -> Socket -> Aff (socket :: SOCKET | eff) SocketInfo
 bindSocket = runFn3 _bind 
 
-onMessage :: forall eff. (Buffer -> RemoteAddressInfo -> Eff eff Unit) -> Socket -> Aff (socket :: SOCKET | eff) Unit
+onMessage :: forall eff1 eff2. (Buffer -> RemoteAddressInfo -> Eff eff1 Unit) -> Socket -> Aff (socket :: SOCKET | eff2) Unit
 onMessage msgHandler socket = liftEff $ _onMessage msgHandler socket
 
 onError :: forall eff. (Error -> Eff eff Unit) -> Socket -> Aff (socket :: SOCKET | eff) Unit
@@ -109,8 +109,8 @@ foreign import _createSocket :: forall eff. String -> Eff (socket :: SOCKET | ef
 foreign import _bind :: forall eff. Fn3 (Maybe Int) (Maybe String) Socket (Aff (socket :: SOCKET | eff) SocketInfo)
 foreign import address :: forall eff. Socket -> Aff (socket :: SOCKET | eff) SocketInfo
 foreign import _closeSocket :: forall eff. Socket -> Eff (socket :: SOCKET | eff) Unit
-foreign import _onMessage :: forall eff. (Buffer -> RemoteAddressInfo -> Eff eff Unit) -> Socket -> Eff (socket :: SOCKET | eff) Unit
-foreign import _onError :: forall eff. Fn2 (Error -> Eff eff Unit) Socket (Eff (socket :: SOCKET | eff) Unit)
+foreign import _onMessage :: forall eff1 eff2. (Buffer -> RemoteAddressInfo -> Eff eff1 Unit) -> Socket -> Eff (socket :: SOCKET | eff2) Unit
+foreign import _onError :: forall eff1 eff2. Fn2 (Error -> Eff eff1 Unit) Socket (Eff (socket :: SOCKET | eff2) Unit)
 foreign import _send :: forall eff. Fn6 Buffer Int Int Int String Socket (Aff (socket :: SOCKET | eff) Unit)
 foreign import _ref :: forall eff. Socket -> Eff (socket :: SOCKET | eff) Socket
 foreign import _unref :: forall eff. Socket -> Eff (socket :: SOCKET | eff) Socket
