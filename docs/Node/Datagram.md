@@ -1,5 +1,8 @@
 ## Module Node.Datagram
 
+This module wraps Node's `dgram` module for usage through Purescript. 
+See `dgram` module [documentation](https://nodejs.org/api/dgram.html) for full details.
+
 #### `Socket`
 
 ``` purescript
@@ -25,6 +28,48 @@ data SocketType
 instance showSocketType :: Show SocketType
 ```
 
+#### `Port`
+
+``` purescript
+type Port = Int
+```
+
+#### `Address`
+
+``` purescript
+type Address = String
+```
+
+#### `Family`
+
+``` purescript
+type Family = String
+```
+
+#### `BufferLength`
+
+``` purescript
+type BufferLength = Int
+```
+
+#### `Interface`
+
+``` purescript
+type Interface = String
+```
+
+#### `MessageListener`
+
+``` purescript
+type MessageListener eff = Buffer -> RemoteAddressInfo -> Eff eff Unit
+```
+
+#### `ErrorListener`
+
+``` purescript
+type ErrorListener eff = Error -> Eff eff Unit
+```
+
 #### `SocketInfo`
 
 ``` purescript
@@ -40,6 +85,7 @@ instance showSocketInfo :: Show SocketInfo
 
 ``` purescript
 newtype RemoteAddressInfo
+  = RemoteAddressInfo { address :: Address, port :: Port }
 ```
 
 ##### Instances
@@ -62,25 +108,31 @@ closeSocket :: forall eff. Socket -> Aff (socket :: SOCKET | eff) Unit
 #### `bindSocket`
 
 ``` purescript
-bindSocket :: forall eff. Maybe Int -> Maybe String -> Socket -> Aff (socket :: SOCKET | eff) SocketInfo
+bindSocket :: forall eff. Maybe Port -> Maybe Address -> Socket -> Aff (socket :: SOCKET | eff) SocketInfo
 ```
 
 #### `onMessage`
 
 ``` purescript
-onMessage :: forall eff. (Buffer -> RemoteAddressInfo -> Eff eff Unit) -> Socket -> Aff (socket :: SOCKET | eff) Unit
+onMessage :: forall eff1 eff2. MessageListener eff1 -> Socket -> Aff (socket :: SOCKET | eff2) Unit
 ```
+
+Registers a listener for incoming messages on a bound socket.
+Corresponds to Node's `socket.on('message', function(m) { ... })` functionality
 
 #### `onError`
 
 ``` purescript
-onError :: forall eff. (Error -> Eff eff Unit) -> Socket -> Aff (socket :: SOCKET | eff) Unit
+onError :: forall eff1 eff2. ErrorListener eff1 -> Socket -> Aff (socket :: SOCKET | eff2) Unit
 ```
+
+Register a listener for errors.
+Corresponds to Node's `socket.on('error', function(e) { ... }) functionality`
 
 #### `send`
 
 ``` purescript
-send :: forall eff. Buffer -> Int -> Int -> Int -> String -> Socket -> Aff (socket :: SOCKET | eff) Unit
+send :: forall eff. Buffer -> Offset -> BufferLength -> Port -> Address -> Socket -> Aff (socket :: SOCKET | eff) Unit
 ```
 
 #### `ref`
@@ -116,13 +168,13 @@ setMulticastTTL :: forall eff. Int -> Socket -> Aff (socket :: SOCKET | eff) Soc
 #### `addMembership`
 
 ``` purescript
-addMembership :: forall eff. String -> Maybe String -> Socket -> Aff (socket :: SOCKET | eff) Socket
+addMembership :: forall eff. Address -> Maybe Interface -> Socket -> Aff (socket :: SOCKET | eff) Socket
 ```
 
 #### `dropMembership`
 
 ``` purescript
-dropMembership :: forall eff. String -> Maybe String -> Socket -> Aff (socket :: SOCKET | eff) Socket
+dropMembership :: forall eff. Address -> Maybe Interface -> Socket -> Aff (socket :: SOCKET | eff) Socket
 ```
 
 #### `address`

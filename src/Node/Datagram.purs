@@ -1,3 +1,5 @@
+-- | This module wraps Node's `dgram` module for usage through Purescript. 
+-- | See `dgram` module [documentation](https://nodejs.org/api/dgram.html) for full details.
 module Node.Datagram(
   Socket(),
   SOCKET(),
@@ -80,9 +82,13 @@ closeSocket = liftEff <<< _closeSocket
 bindSocket :: forall eff. Maybe Port -> Maybe Address -> Socket -> Aff (socket :: SOCKET | eff) SocketInfo
 bindSocket = runFn3 _bind 
 
+-- | Registers a listener for incoming messages on a bound socket.
+-- | Corresponds to Node's `socket.on('message', function(m) { ... })` functionality
 onMessage :: forall eff1 eff2. MessageListener eff1 -> Socket -> Aff (socket :: SOCKET | eff2) Unit
 onMessage msgHandler socket = liftEff $ _onMessage msgHandler socket
 
+-- | Register a listener for errors.
+-- | Corresponds to Node's `socket.on('error', function(e) { ... }) functionality`
 onError :: forall eff1 eff2. ErrorListener eff1 -> Socket -> Aff (socket :: SOCKET | eff2) Unit
 onError errHandler socket = liftEff $ runFn2 _onError errHandler socket
 
