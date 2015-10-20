@@ -51,8 +51,8 @@ type Family = String
 type BufferLength = Int
 type Interface = String
 
-type MessageListener eff = Buffer -> RemoteAddressInfo -> Eff eff Unit
-type ErrorListener eff = Error -> Eff eff Unit
+type MessageListener eff a = Buffer -> RemoteAddressInfo -> Eff eff a
+type ErrorListener eff a = Error -> Eff eff a
 
 newtype SocketInfo = SocketInfo {
   port :: Port,
@@ -90,12 +90,12 @@ bindSocket = runFn3 _bind
 
 -- | Registers a listener for incoming messages on a bound socket.
 -- | Corresponds to Node's `socket.on('message', function(m) { ... })` functionality
-onMessage :: forall eff1 eff2. MessageListener eff1 -> Socket -> Aff (socket :: SOCKET | eff2) Unit
+onMessage :: forall a eff1 eff2. MessageListener eff1 a -> Socket -> Aff (socket :: SOCKET | eff2) Unit
 onMessage msgHandler socket = liftEff $ _onMessage msgHandler socket
 
 -- | Register a listener for errors.
 -- | Corresponds to Node's `socket.on('error', function(e) { ... })` functionality
-onError :: forall eff1 eff2. ErrorListener eff1 -> Socket -> Aff (socket :: SOCKET | eff2) Unit
+onError :: forall a eff1 eff2. ErrorListener eff1 a -> Socket -> Aff (socket :: SOCKET | eff2) Unit
 onError errHandler socket = liftEff $ runFn2 _onError errHandler socket
 
 onClose :: forall eff1 eff2. (Unit -> Eff eff1 Unit) -> Socket -> Aff (socket :: SOCKET | eff2) Unit
@@ -132,10 +132,10 @@ foreign import _createSocket :: forall eff. String -> Eff (socket :: SOCKET | ef
 foreign import _bind :: forall eff. Fn3 (Maybe Int) (Maybe String) Socket (Aff (socket :: SOCKET | eff) SocketInfo)
 foreign import address :: forall eff. Socket -> Aff (socket :: SOCKET | eff) SocketInfo
 foreign import _closeSocket :: forall eff. Socket -> Eff (socket :: SOCKET | eff) Unit
-foreign import _onMessage :: forall eff1 eff2. (Buffer -> RemoteAddressInfo -> Eff eff1 Unit) -> Socket -> Eff (socket :: SOCKET | eff2) Unit
-foreign import _onError :: forall eff1 eff2. Fn2 (Error -> Eff eff1 Unit) Socket (Eff (socket :: SOCKET | eff2) Unit)
-foreign import _onClose :: forall eff1 eff2. (Unit -> Eff eff1 Unit) -> Socket -> Eff (socket :: SOCKET | eff2) Unit
-foreign import _onListening :: forall eff1 eff2. (Unit -> Eff eff1 Unit) -> Socket -> Eff (socket :: SOCKET | eff2) Unit
+foreign import _onMessage :: forall a eff1 eff2. MessageListener eff1 a -> Socket -> Eff (socket :: SOCKET | eff2) Unit
+foreign import _onError :: forall a eff1 eff2. Fn2 (Error -> Eff eff1 a) Socket (Eff (socket :: SOCKET | eff2) Unit)
+foreign import _onClose :: forall a eff1 eff2. (Unit -> Eff eff1 a) -> Socket -> Eff (socket :: SOCKET | eff2) Unit
+foreign import _onListening :: forall a eff1 eff2. (Unit -> Eff eff1 a) -> Socket -> Eff (socket :: SOCKET | eff2) Unit
 foreign import _send :: forall eff. Fn6 Buffer Int Int Int String Socket (Aff (socket :: SOCKET | eff) Unit)
 foreign import _ref :: forall eff. Socket -> Eff (socket :: SOCKET | eff) Socket
 foreign import _unref :: forall eff. Socket -> Eff (socket :: SOCKET | eff) Socket
