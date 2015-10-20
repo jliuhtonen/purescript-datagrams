@@ -19,6 +19,8 @@ module Node.Datagram(
   address,
   onMessage,
   onError,
+  onClose,
+  onListening,
   send,
   ref,
   unref,
@@ -96,6 +98,12 @@ onMessage msgHandler socket = liftEff $ _onMessage msgHandler socket
 onError :: forall eff1 eff2. ErrorListener eff1 -> Socket -> Aff (socket :: SOCKET | eff2) Unit
 onError errHandler socket = liftEff $ runFn2 _onError errHandler socket
 
+onClose :: forall eff1 eff2. (Unit -> Eff eff1 Unit) -> Socket -> Aff (socket :: SOCKET | eff2) Unit
+onClose closeHandler socket = liftEff $ _onClose closeHandler socket
+
+onListening :: forall eff1 eff2. (Unit -> Eff eff1 Unit) -> Socket -> Aff (socket :: SOCKET | eff2) Unit
+onListening listenHandler socket = liftEff $ _onListening listenHandler socket
+
 send :: forall eff. Buffer -> Offset -> BufferLength -> Port -> Address -> Socket -> Aff (socket :: SOCKET | eff) Unit
 send = runFn6 _send
 
@@ -126,6 +134,8 @@ foreign import address :: forall eff. Socket -> Aff (socket :: SOCKET | eff) Soc
 foreign import _closeSocket :: forall eff. Socket -> Eff (socket :: SOCKET | eff) Unit
 foreign import _onMessage :: forall eff1 eff2. (Buffer -> RemoteAddressInfo -> Eff eff1 Unit) -> Socket -> Eff (socket :: SOCKET | eff2) Unit
 foreign import _onError :: forall eff1 eff2. Fn2 (Error -> Eff eff1 Unit) Socket (Eff (socket :: SOCKET | eff2) Unit)
+foreign import _onClose :: forall eff1 eff2. (Unit -> Eff eff1 Unit) -> Socket -> Eff (socket :: SOCKET | eff2) Unit
+foreign import _onListening :: forall eff1 eff2. (Unit -> Eff eff1 Unit) -> Socket -> Eff (socket :: SOCKET | eff2) Unit
 foreign import _send :: forall eff. Fn6 Buffer Int Int Int String Socket (Aff (socket :: SOCKET | eff) Unit)
 foreign import _ref :: forall eff. Socket -> Eff (socket :: SOCKET | eff) Socket
 foreign import _unref :: forall eff. Socket -> Eff (socket :: SOCKET | eff) Socket

@@ -36,6 +36,24 @@ exports._onError = function(callback, socket) {
   }
 }
 
+exports._onClose = function(callback, socket) {
+  return function() {
+    socket.on('close', function() {
+      callback()()
+    })
+    return {}
+  }
+}
+
+exports._onListening = function(callback, socket) {
+  return function() {
+    socket.on('listening', function() {
+      callback()()
+    })
+    return {}
+  }
+}
+
 exports._bind = function(port, address, socket) {
   return function(success, error) {
     try {
