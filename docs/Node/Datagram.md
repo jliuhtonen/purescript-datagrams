@@ -1,6 +1,6 @@
 ## Module Node.Datagram
 
-This module wraps Node's `dgram` module with FFI for usage from Purescript. 
+This module wraps Node's `dgram` module with FFI for usage from Purescript.
 See `dgram` module [documentation](https://nodejs.org/api/dgram.html) for full details.
 
 #### `Socket`
@@ -61,13 +61,13 @@ type Interface = String
 #### `MessageListener`
 
 ``` purescript
-type MessageListener eff = Buffer -> RemoteAddressInfo -> Eff eff Unit
+type MessageListener eff a = Buffer -> RemoteAddressInfo -> Eff eff a
 ```
 
 #### `ErrorListener`
 
 ``` purescript
-type ErrorListener eff = Error -> Eff eff Unit
+type ErrorListener eff a = Error -> Eff eff a
 ```
 
 #### `SocketInfo`
@@ -119,20 +119,50 @@ Calling this function with address set to `Nothing` will listen on all interface
 #### `onMessage`
 
 ``` purescript
-onMessage :: forall eff1 eff2. MessageListener eff1 -> Socket -> Aff (socket :: SOCKET | eff2) Unit
+onMessage :: forall a eff1 eff2. MessageListener eff1 a -> Socket -> Aff (socket :: SOCKET | eff2) Unit
 ```
 
 Registers a listener for incoming messages on a bound socket.
 Corresponds to Node's `socket.on('message', function(m) { ... })` functionality
 
+#### `onMessage'`
+
+``` purescript
+onMessage' :: forall a eff1 eff2. MessageListener eff1 a -> Socket -> Eff (socket :: SOCKET | eff2) Unit
+```
+
 #### `onError`
 
 ``` purescript
-onError :: forall eff1 eff2. ErrorListener eff1 -> Socket -> Aff (socket :: SOCKET | eff2) Unit
+onError :: forall a eff1 eff2. ErrorListener eff1 a -> Socket -> Aff (socket :: SOCKET | eff2) Unit
 ```
 
 Register a listener for errors.
 Corresponds to Node's `socket.on('error', function(e) { ... })` functionality
+
+#### `onError'`
+
+``` purescript
+onError' :: forall a eff1 eff2. ErrorListener eff1 a -> Socket -> Eff (socket :: SOCKET | eff2) Unit
+```
+
+#### `onClose`
+
+``` purescript
+onClose :: forall eff1 eff2. (Unit -> Eff eff1 Unit) -> Socket -> Aff (socket :: SOCKET | eff2) Unit
+```
+
+#### `onClose'`
+
+``` purescript
+onClose' :: forall eff1 eff2. (Unit -> Eff eff1 Unit) -> Socket -> Eff (socket :: SOCKET | eff2) Unit
+```
+
+#### `onListening`
+
+``` purescript
+onListening :: forall eff1 eff2. (Unit -> Eff eff1 Unit) -> Socket -> Aff (socket :: SOCKET | eff2) Unit
+```
 
 #### `send`
 
