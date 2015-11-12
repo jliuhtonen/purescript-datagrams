@@ -18,8 +18,11 @@ module Node.Datagram(
   bindSocket,
   address,
   onMessage,
+  onMessage',
   onError,
+  onError',
   onClose,
+  onClose',
   onListening,
   send,
   ref,
@@ -28,7 +31,7 @@ module Node.Datagram(
   setTTL,
   setMulticastTTL,
   addMembership,
-  dropMembership    
+  dropMembership
   ) where
 
 import Control.Monad.Aff
@@ -86,20 +89,29 @@ closeSocket = liftEff <<< _closeSocket
 -- | Calling this function with port set to `Nothing` will bind the socket on a random port provided by the OS.
 -- | Calling this function with address set to `Nothing` will listen on all interfaces (`0.0.0.0`).
 bindSocket :: forall eff. Maybe Port -> Maybe Address -> Socket -> Aff (socket :: SOCKET | eff) SocketInfo
-bindSocket = runFn3 _bind 
+bindSocket = runFn3 _bind
 
 -- | Registers a listener for incoming messages on a bound socket.
 -- | Corresponds to Node's `socket.on('message', function(m) { ... })` functionality
 onMessage :: forall a eff1 eff2. MessageListener eff1 a -> Socket -> Aff (socket :: SOCKET | eff2) Unit
-onMessage msgHandler socket = liftEff $ _onMessage msgHandler socket
+onMessage msgHandler socket = liftEff $ onMessage' msgHandler socket
+
+onMessage' :: forall a eff1 eff2. MessageListener eff1 a -> Socket -> Eff (socket :: SOCKET | eff2) Unit
+onMessage' = _onMessage
 
 -- | Register a listener for errors.
 -- | Corresponds to Node's `socket.on('error', function(e) { ... })` functionality
 onError :: forall a eff1 eff2. ErrorListener eff1 a -> Socket -> Aff (socket :: SOCKET | eff2) Unit
-onError errHandler socket = liftEff $ runFn2 _onError errHandler socket
+onError errHandler socket = liftEff $ onError' errHandler socket
+
+onError' :: forall a eff1 eff2. ErrorListener eff1 a -> Socket -> Eff (socket :: SOCKET | eff2) Unit
+onError' = runFn2 _onError
 
 onClose :: forall eff1 eff2. (Unit -> Eff eff1 Unit) -> Socket -> Aff (socket :: SOCKET | eff2) Unit
 onClose closeHandler socket = liftEff $ _onClose closeHandler socket
+
+onClose' :: forall eff1 eff2. (Unit -> Eff eff1 Unit) -> Socket -> Eff (socket :: SOCKET | eff2) Unit
+onClose' = _onClose
 
 onListening :: forall eff1 eff2. (Unit -> Eff eff1 Unit) -> Socket -> Aff (socket :: SOCKET | eff2) Unit
 onListening listenHandler socket = liftEff $ _onListening listenHandler socket
